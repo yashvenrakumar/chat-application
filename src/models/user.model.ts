@@ -2,47 +2,46 @@ import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database";
 
 export interface UserAttributes {
-  usr_id: number;
-  fst_nm: string;
-  lst_nm: string;
+  user_id: number;
+  first_name: string;
+  last_name: string;
   email_id: string;
-  mob_no?: string | null;
-  is_actv: boolean;
-  crt_dt?: Date;
-  upd_dt?: Date;
+  is_active: boolean;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export type UserCreationAttributes = Optional<
   UserAttributes,
-  "usr_id" | "is_actv" | "mob_no" | "crt_dt" | "upd_dt"
+  "user_id" | "is_active" | "created_at" | "updated_at"
 >;
 
 export class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public usr_id!: number;
-  public fst_nm!: string;
-  public lst_nm!: string;
+  public user_id!: number;
+  public first_name!: string;
+  public last_name!: string;
   public email_id!: string;
-  public mob_no!: string | null;
-  public is_actv!: boolean;
-  public readonly crt_dt!: Date;
-  public readonly upd_dt!: Date;
+ 
+  public is_active!: boolean;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
 }
 
 User.init(
   {
-    usr_id: {
+    user_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
     },
-    fst_nm: {
+    first_name: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    lst_nm: {
+    last_name: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
@@ -51,21 +50,18 @@ User.init(
       allowNull: false,
       unique: "uk_usr_email_id",
     },
-    mob_no: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-    },
-    is_actv: {
+    
+    is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
-    crt_dt: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    upd_dt: {
+    updated_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
@@ -73,12 +69,12 @@ User.init(
   },
   {
     sequelize,
-    modelName: "usr",
-    tableName: "usr",
+    modelName: "user",
+    tableName: "user",
     timestamps: false,
     indexes: [
-      { name: "idx_usr_email_id", fields: ["email_id"] },
-      { name: "idx_usr_is_actv", fields: ["is_actv"] },
+      { name: "idx_user_email_id", fields: ["email_id"] },
+      { name: "idx_user_is_active", fields: ["is_active"] },
     ],
   }
 );

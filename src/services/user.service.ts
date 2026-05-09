@@ -3,12 +3,11 @@ import { User, UserCreationAttributes } from "../models/user.model";
 import { presenceService } from "./presence.service";
  
 export type DirectoryUserRow = {
-  usr_id: number;
-  fst_nm: string;
-  lst_nm: string;
+  user_id: number;
+  first_name: string;
+  last_name: string;
   email_id: string;
-  mob_no: string | null;
-  is_actv: boolean;
+  is_active: boolean;
   is_online: boolean;
 };
 
@@ -20,12 +19,12 @@ export class UserService {
 
   static async listUsers(): Promise<User[]> {
     return User.findAll({
-      order: [["usr_id", "DESC"]],
+      order: [["user_id", "DESC"]],
     });
   }
 
   static async listUsersDirectory(params: {
-    exclude_usr_id: number;
+    exclude_user_id: number;
     page: number;
     limit: number;
   }): Promise<{
@@ -35,14 +34,14 @@ export class UserService {
     limit: number;
     total_pages: number;
   }> {
-    const { exclude_usr_id, page, limit } = params;
+    const { exclude_user_id, page, limit } = params;
     const safeLimit = Math.min(Math.max(limit, 1), 50);
     const safePage = Math.max(page, 1);
     const offset = (safePage - 1) * safeLimit;
 
     const { count, rows } = await User.findAndCountAll({
-      where: { usr_id: { [Op.ne]: exclude_usr_id } },
-      order: [["usr_id", "DESC"]],
+      where: { user_id: { [Op.ne]: exclude_user_id } },
+      order: [["user_id", "DESC"]],
       limit: safeLimit,
       offset,
     });
@@ -50,13 +49,12 @@ export class UserService {
     const items: DirectoryUserRow[] = rows.map((u) => {
       const raw = u.get({ plain: true });
       return {
-        usr_id: raw.usr_id,
-        fst_nm: raw.fst_nm,
-        lst_nm: raw.lst_nm,
+        user_id: raw.user_id,
+        first_name: raw.first_name,
+        last_name: raw.last_name,
         email_id: raw.email_id,
-        mob_no: raw.mob_no ?? null,
-        is_actv: raw.is_actv,
-        is_online: presenceService.isUserOnline(raw.usr_id),
+        is_active: raw.is_active,
+        is_online: presenceService.isUserOnline(raw.user_id),
       };
     });
 

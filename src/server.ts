@@ -1,3 +1,4 @@
+import "./types/express-request-augmentation";
 import app from "./app";
 import { connectDB, sequelize } from "./config/database";
 import { env } from "./config/env";
@@ -37,8 +38,17 @@ const startServer = async (): Promise<void> => {
     await sequelize.sync({ alter: env.nodeEnv === "development" });
 
     httpServer = createServer(app);
-  
 
+    httpServer.once("error", (err: NodeJS.ErrnoException) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(
+          `Port ${env.port} is already in use. Stop the other process (e.g. \`lsof -ti:${env.port} | xargs kill\`) or set PORT in .env.`,
+        );
+      } else {
+        console.error(err);
+      }
+      process.exit(1);
+    });
     httpServer.listen(env.port, () => {
       console.log(`Server is running on port ${env.port}`);
     });
