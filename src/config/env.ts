@@ -6,8 +6,7 @@ dotenv.config();
 export const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT || 5000),
-    trustProxy: process.env.TRUST_PROXY === "true" || process.env.TRUST_PROXY === "1",
-   exposeApiDocs: process.env.EXPOSE_API_DOCS === "true",
+    exposeApiDocs: process.env.EXPOSE_API_DOCS === "true",
   db: {
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT || 3306),

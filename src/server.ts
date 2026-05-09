@@ -12,8 +12,7 @@ const startServer = async (): Promise<void> => {
   let socketServer: SocketServer | undefined;
 
   const gracefulShutdown = async (signal: string): Promise<void> => {
-    console.log(`${signal} received, shutting down gracefully`);
-    try {
+     try {
       socketServer?.disconnectSockets(true);
       await new Promise<void>((resolve, reject) => {
         socketServer?.close((err) => (err ? reject(err) : resolve()));
@@ -38,8 +37,7 @@ const startServer = async (): Promise<void> => {
     await sequelize.sync({ alter: env.nodeEnv === "development" });
 
     httpServer = createServer(app);
-   
- 
+  
 
     httpServer.listen(env.port, () => {
       console.log(`Server is running on port ${env.port}`);
@@ -55,15 +53,4 @@ const startServer = async (): Promise<void> => {
 
 void startServer();
 
-
-// import express from "express";
-
-// const app = express();
-
-// app.get("/", (_req, res) => {
-//   res.send("Server Running");
-// });
-
-// app.listen(5000, () => {
-//   console.log("Server running on port 5000");
-// });
+ 
