@@ -2,13 +2,26 @@ import "./types/express-request-augmentation";
 import app from "./app";
 import { connectDB, sequelize } from "./config/database";
 import { env } from "./config/env";
-
 import { createServer, type Server as HttpServer } from "http";
+import { Server as SocketServer } from "socket.io";
+import { setSocketServer } from "./socket/io";
+import { registerSocketEvents } from "./socket/register-events";
 
 const startServer = async (): Promise<void> => {
   let httpServer: HttpServer | undefined;
+  let socketServer: SocketServer | undefined;
 
   const gracefulShutdown = async (signal: string): Promise<void> => {
+    console.log(`${signal} received, shutting down gracefully`);
+    try {
+      socketServer?.disconnectSockets(true);
+      await new Promise<void>((resolve, reject) => {
+        socketServer?.close((err) => (err ? reject(err) : resolve()));
+      });
+    } catch (closeError) {
+      console.error("Socket.IO shutdown error:", closeError);
+    }
+
     try {
       await sequelize.close();
     } catch (dbError) {
@@ -29,6 +42,12 @@ const startServer = async (): Promise<void> => {
     });
 
     httpServer = createServer(app);
+    socketServer = new SocketServer(httpServer, {
+      cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] },
+    });
+
+    setSocketServer(socketServer);
+    registerSocketEvents(socketServer);
 
     httpServer.once("error", (err: NodeJS.ErrnoException) => {
       if (err.code === "EADDRINUSE") {
