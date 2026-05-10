@@ -12,6 +12,7 @@ import {
 const groupRouter = Router();
 
 groupRouter.get("/my", asyncHandler(GroupController.myGroups));
+
 groupRouter.post(
   "/",
   validateBody(createGroupSchema),
