@@ -31,7 +31,7 @@ export class UserController {
 
   /** Paginated users for direct messaging (excludes current user). Query: `page`, `limit` (default 10, max 50). */
   static async listDirectory(req: Request, res: Response): Promise<void> {
-    const auth_user_id = req.auth_usr_id as number;
+    const auth_user_id = req.auth_user_id as number;
     const page = parsePageQuery(req.query.page);
     const limit = Math.min(parseLimitQuery(req.query.limit, 10), 50);
     const data = await UserService.listUsersDirectory({

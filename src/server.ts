@@ -2,25 +2,13 @@ import "./types/express-request-augmentation";
 import app from "./app";
 import { connectDB, sequelize } from "./config/database";
 import { env } from "./config/env";
- 
+
 import { createServer, type Server as HttpServer } from "http";
-import { Server as SocketServer } from "socket.io";
- 
- 
- 
+
 const startServer = async (): Promise<void> => {
   let httpServer: HttpServer | undefined;
-  let socketServer: SocketServer | undefined;
 
   const gracefulShutdown = async (signal: string): Promise<void> => {
-     try {
-      socketServer?.disconnectSockets(true);
-      await new Promise<void>((resolve, reject) => {
-        socketServer?.close((err) => (err ? reject(err) : resolve()));
-      });
-    } catch (closeError) {
-      console.error("Socket.IO shutdown error:", closeError);
-    }
     try {
       await sequelize.close();
     } catch (dbError) {
@@ -35,7 +23,10 @@ const startServer = async (): Promise<void> => {
   try {
     await connectDB();
     console.log("Database connected successfully");
-    await sequelize.sync({ alter: env.nodeEnv === "development" });
+    await sequelize.sync({
+      alter: env.nodeEnv === "development",
+      logging: false,
+    });
 
     httpServer = createServer(app);
 
@@ -62,5 +53,3 @@ const startServer = async (): Promise<void> => {
 };
 
 void startServer();
-
- 
