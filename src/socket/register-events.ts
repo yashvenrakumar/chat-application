@@ -12,15 +12,15 @@ export const registerSocketEvents = (socketServer: Server): void => {
     }
 
     presenceService.addSocket(user_id, socket.id);
-    socket.join(`usr:${user_id}`);
+    socket.join(`user:${user_id}`);
     socketServer.emit("user:presence", { user_id, is_online: true });
 
     const groups = await GroupService.listMyGroups(user_id);
     groups.forEach((group) => {
       const group_id = Number(group.group_id);
-      socket.join(`grp:${group_id}`);
+      socket.join(`group:${group_id}`);
       presenceService.joinGroup(user_id, group_id);
-      socketServer.to(`grp:${group_id}`).emit("group:presence", {
+      socketServer.to(`group:${group_id}`).emit("group:presence", {
         group_id,
         online_cnt: presenceService.getOnlineCount(group_id),
       });
@@ -32,7 +32,7 @@ export const registerSocketEvents = (socketServer: Server): void => {
         sender_user_id: user_id,
         message_text: payload.message_text,
       });
-      socketServer.to(`grp:${payload.group_id}`).emit("group:message", message);
+      socketServer.to(`group:${payload.group_id}`).emit("group:message", message);
     });
 
     socket.on("chat:direct:send", async (payload: { receiver_user_id: number; message_text: string }) => {
@@ -41,8 +41,8 @@ export const registerSocketEvents = (socketServer: Server): void => {
         receiver_user_id: payload.receiver_user_id,
         message_text: payload.message_text,
       });
-      socketServer.to(`usr:${user_id}`).emit("direct:message", message);
-      socketServer.to(`usr:${payload.receiver_user_id}`).emit("direct:message", message);
+      socketServer.to(`user:${user_id}`).emit("direct:message", message);
+      socketServer.to(`user:${payload.receiver_user_id}`).emit("direct:message", message);
     });
 
     socket.on("disconnect", () => {
@@ -54,7 +54,7 @@ export const registerSocketEvents = (socketServer: Server): void => {
       groups.forEach((group) => {
         const group_id = Number(group.group_id);
         presenceService.leaveGroup(user_id, group_id);
-        socketServer.to(`grp:${group_id}`).emit("group:presence", {
+        socketServer.to(`group:${group_id}`).emit("group:presence", {
           group_id,
           online_cnt: presenceService.getOnlineCount(group_id),
         });

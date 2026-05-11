@@ -238,12 +238,12 @@ sequenceDiagram
   Reg->>GS: listMyGroups
   GS-->>Reg: groups
   Reg->>PS: addSocket + joinGroup
-  Reg-->>Client: joined usr / grp rooms
+  Reg-->>Client: joined user / grgroupp rooms
 
   Client->>Reg: chat:group:send
   Reg->>CS: sendGroupMessage
   CS-->>Reg: message
-  Reg->>IO: to grp emit group:message
+  Reg->>IO: to group emit group:message
 ```
 
 ---
@@ -259,7 +259,7 @@ flowchart TD
   C --> D[(MySQL chat_message)]
   B --> E[NotificationService per member]
   E --> F[(MySQL notification)]
-  B --> G["io.to grp:id emit group:message"]
+  B --> G["io.to group:id emit group:message"]
   G --> H[Other connected clients in room]
 ```
 

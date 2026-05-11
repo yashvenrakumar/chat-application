@@ -32,7 +32,7 @@ export class ChatController {
         ),
     );
 
-    io.to(`grp:${group_id}`).emit("group:message", message);
+    io.to(`group:${group_id}`).emit("group:message", message);
     res
       .status(201)
       .json(successResponse("Group message sent successfully", message));
@@ -66,8 +66,8 @@ export class ChatController {
       related_user_id: auth_user_id,
     });
 
-    io.to(`usr:${peer_user_id}`).emit("direct:message", message);
-    io.to(`usr:${auth_user_id}`).emit("direct:message", message);
+    io.to(`user:${peer_user_id}`).emit("direct:message", message);
+    io.to(`user:${auth_user_id}`).emit("direct:message", message);
     res
       .status(201)
       .json(successResponse("Direct message sent successfully", message));

@@ -73,7 +73,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "x-usr-id",
+                "key": "x-user-id",
                 "value": "1"
               }
             ],
@@ -101,7 +101,7 @@
                 }
               ]
             },
-            "description": "Generated from cURL: curl -sS -X GET --url \"http://localhost:5000/api/v1/users/directory?page=1&limit=10\" -H \"x-usr-id: 1\"\n"
+            "description": "Generated from cURL: curl -sS -X GET --url \"http://localhost:5000/api/v1/users/directory?page=1&limit=10\" -H \"x-user-id: 1\"\n"
           },
           "response": []
         }

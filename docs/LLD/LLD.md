@@ -570,7 +570,7 @@ All routes require **`x-user-id`**.
 
 1. Persists **`ChatMessage`** (group).
 2. **Notifications:** for each other member, creates **`Notification`** (`type: "group"`, title/body truncated body preview up to 120 chars).
-3. **Socket.IO:** `io.to("grp:" + group_id).emit("group:message", message)`.
+3. **Socket.IO:** `io.to("group:" + group_id).emit("group:message", message)`.
 
 **Errors**
 
@@ -656,7 +656,7 @@ All routes require **`x-user-id`**.
 **Side effects**
 
 1. **Notification** for peer: `notification_type: "direct"`, **`related_user_id`** = sender.
-2. **Socket.IO:** emits **`direct:message`** to **`usr:<peer>`** and **`usr:<sender>`**.
+2. **Socket.IO:** emits **`direct:message`** to **`user:<peer>`** and **`user:<sender>`**.
 
 ---
 
@@ -772,7 +772,7 @@ Associations are declared in **`src/models/index.ts`** (`belongsTo` only; no `ha
 | `user_id` | BIGINT UNSIGNED | PK, AI |
 | `first_name` | VARCHAR(100) | NOT NULL |
 | `last_name` | VARCHAR(100) | NOT NULL |
-| `email_id` | VARCHAR(200) | NOT NULL, UNIQUE `uk_usr_email_id` |
+| `email_id` | VARCHAR(200) | NOT NULL, UNIQUE `uk_user_email_id` |
 | `is_active` | BOOLEAN | NOT NULL, default true |
 | `created_at` | DATE | NOT NULL, default NOW |
 | `updated_at` | DATE | NOT NULL, default NOW |
@@ -888,8 +888,8 @@ Indexes: `user_id`, `is_read`.
 
 | Room name | Members |
 |-----------|---------|
-| `usr:<user_id>` | Sockets that authenticated as that user |
-| `grp:<group_id>` | Sockets for users who were in **`listMyGroups(user_id)`** at **connection time** |
+| `user:<user_id>` | Sockets that authenticated as that user |
+| `group:<group_id>` | Sockets for users who were in **`listMyGroups(user_id)`** at **connection time** |
 
 **Caveat:** If group membership changes while connected, room membership is **not** refreshed until reconnect.
 
@@ -902,7 +902,7 @@ Indexes: `user_id`, `is_read`.
 
 | Event | Payload | Behavior |
 |-------|---------|----------|
-| **`chat:group:send`** | `{ group_id: number, message_text: string }` | **`ChatService.sendGroupMessage`**; **`group:message`** to `grp:<group_id>`. **No notification rows.** |
+| **`chat:group:send`** | `{ group_id: number, message_text: string }` | **`ChatService.sendGroupMessage`**; **`group:message`** to `group:<group_id>`. **No notification rows.** |
 | **`chat:direct:send`** | `{ receiver_user_id: number, message_text: string }` | **`ChatService.sendDirectMessage`**; **`direct:message`** to sender + receiver user rooms. **No notification rows.** |
 
 ### 14.6 Server → client events (emitted from code)

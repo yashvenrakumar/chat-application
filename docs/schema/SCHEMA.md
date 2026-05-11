@@ -180,7 +180,7 @@ Types below match Sequelize **`DataTypes`** (MySQL physical types follow Sequeli
 | `user_id` | BIGINT UNSIGNED | PK, auto-increment |
 | `first_name` | VARCHAR(100) | NOT NULL |
 | `last_name` | VARCHAR(100) | NOT NULL |
-| `email_id` | VARCHAR(200) | NOT NULL, unique `uk_usr_email_id` |
+| `email_id` | VARCHAR(200) | NOT NULL, unique `uk_user_email_id` |
 | `is_active` | BOOLEAN | NOT NULL, default `true` |
 | `created_at` | DATE | NOT NULL, default NOW |
 | `updated_at` | DATE | NOT NULL, default NOW |

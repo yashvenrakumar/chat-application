@@ -180,10 +180,10 @@ erDiagram
 
 On successful connection:
 
-1. **User room:** `usr:{user_id}` — used to target direct messages to a user.
+1. **User room:** `user:{user_id}` — used to target direct messages to a user.
 2. **Presence:** the user is tracked as online via **`presenceService`** (map of `user_id` → set of `socket_id`s).
 3. **Broadcast:** `user:presence` with `{ user_id, is_online: true }` is emitted **globally** to all clients.
-4. **Group rooms:** For each group returned by **`GroupService.listMyGroups`**, the socket joins `grp:{group_id}` and updates **`presenceService.joinGroup`**, then notifies that group room with **`group:presence`** (includes `online_cnt`).
+4. **Group rooms:** For each group returned by **`GroupService.listMyGroups`**, the socket joins `group:{group_id}` and updates **`presenceService.joinGroup`**, then notifies that group room with **`group:presence`** (includes `online_cnt`).
 
 On **disconnect**, socket maps and group presence are updated; **`user:presence`** and per-group **`group:presence`** are emitted again with updated counts.
 
@@ -191,8 +191,8 @@ On **disconnect**, socket maps and group presence are updated; **`user:presence`
 
 | Client event (in) | Server behavior |
 |-------------------|-----------------|
-| `chat:group:send` `{ group_id, message_text }` | Persists via **`ChatService.sendGroupMessage`**, emits **`group:message`** to room `grp:{group_id}`. |
-| `chat:direct:send` `{ receiver_user_id, message_text }` | Persists via **`ChatService.sendDirectMessage`**, emits **`direct:message`** to `usr:{sender}` and `usr:{receiver}`. |
+| `chat:group:send` `{ group_id, message_text }` | Persists via **`ChatService.sendGroupMessage`**, emits **`group:message`** to room `group:{group_id}`. |
+| `chat:direct:send` `{ receiver_user_id, message_text }` | Persists via **`ChatService.sendDirectMessage`**, emits **`direct:message`** to `user:{sender}` and `user:{receiver}`. |
 
 **Server → client** events used in codebase include: `group:message`, `direct:message`, `user:presence`, `group:presence`, and (from HTTP) `message:seen` (see §8.3).
 
@@ -251,7 +251,7 @@ Base: **`/api/v1`**
 | Method | Path | Function |
 |--------|------|----------|
 | GET | `/chat/groups/:group_id/messages` | Group history (member-only); ordered ascending by `sent_at`; **limit 500** newest window implied by query implementation (fixed limit in service). |
-| POST | `/chat/groups/:group_id/messages` | Send group message; persists; **notifies** other members via notifications; **Socket.IO** `group:message` to `grp:{group_id}`. |
+| POST | `/chat/groups/:group_id/messages` | Send group message; persists; **notifies** other members via notifications; **Socket.IO** `group:message` to `group:{group_id}`. |
 | GET | `/chat/groups/:group_id/online` | Member-only; returns `online_user_ids` and count from **in-memory presence** (Socket.IO join semantics). |
 | GET | `/chat/direct/:peer_user_id/messages` | Direct history between auth user and peer; `group_id` null; **limit 500**. |
 | POST | `/chat/direct/:peer_user_id/messages` | Send DM; **notification** to peer; **Socket.IO** to both user rooms. |
@@ -301,7 +301,7 @@ sequenceDiagram
     API->>NS: createNotification group
     NS->>DB: insert notification
   end
-  API->>IO: emit group:message to grp room
+  API->>IO: emit group:message to group room
   API-->>C: 201 success envelope
 ```
 

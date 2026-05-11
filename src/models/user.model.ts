@@ -48,7 +48,7 @@ User.init(
     email_id: {
       type: DataTypes.STRING(200),
       allowNull: false,
-      unique: "uk_usr_email_id",
+      unique: "uk_user_email_id",
     },
     
     is_active: {

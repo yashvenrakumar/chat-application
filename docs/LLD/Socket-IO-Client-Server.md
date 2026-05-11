@@ -60,14 +60,14 @@ sequenceDiagram
     IO->>C: disconnect
   else valid
     IO->>PS: addSocket(user_id, socket.id)
-    IO->>C: join room usr:user_id
+    IO->>C: join room user:user_id
     IO->>IO: emit user:presence (broadcast)
     IO->>DB: listMyGroups(user_id)
     DB-->>IO: groups[]
     loop each group
-      IO->>C: join grp:group_id
+      IO->>C: join group:group_id
       IO->>PS: joinGroup(user_id, group_id)
-      IO->>IO: to grp emit group:presence
+      IO->>IO: to group emit group:presence
     end
   end
 ```
@@ -77,12 +77,12 @@ sequenceDiagram
 1. Read **`user_id = Number(socket.handshake.auth?.user_id)`**.
 2. If falsy or **`NaN`** → **`socket.disconnect()`** and stop (no error payload to the client in this code path).
 3. **`presenceService.addSocket(user_id, socket.id)`** — tracks this tab/device.
-4. **`socket.join("usr:" + user_id)`** — user-scoped room for DMs and presence-related fan-out.
+4. **`socket.join("user:" + user_id)`** — user-scoped room for DMs and presence-related fan-out.
 5. **`socketServer.emit("user:presence", { user_id, is_online: true })`** — **every** connected socket receives it (global broadcast).
 6. Load **`GroupService.listMyGroups(user_id)`** from DB.
-7. For each group: **`socket.join("grp:" + group_id)`**, **`presenceService.joinGroup(user_id, group_id)`**, then **`socketServer.to("grp:" + group_id).emit("group:presence", { group_id, online_cnt })`** so others in that group see an updated count.
+7. For each group: **`socket.join("group:" + group_id)`**, **`presenceService.joinGroup(user_id, group_id)`**, then **`socketServer.to("group:" + group_id).emit("group:presence", { group_id, online_cnt })`** so others in that group see an updated count.
 
-**Important:** Group rooms are determined **once at connect time**. If the user is added to a new group while already connected, they **do not** auto-join `grp:<new_id>` until they **reconnect** (unless you add that feature later).
+**Important:** Group rooms are determined **once at connect time**. If the user is added to a new group while already connected, they **do not** auto-join `group:<new_id>` until they **reconnect** (unless you add that feature later).
 
 ---
 
@@ -152,8 +152,8 @@ Otherwise the user might receive DMs in the socket room for user **A** while sen
 
 | Room name | Who joins | Purpose |
 |-----------|-----------|---------|
-| **`usr:<user_id>`** | Every authenticated socket for that user | **Direct messages** and ensuring the user receives their own copies of DM events. |
-| **`grp:<group_id>`** | Each socket whose **`listMyGroups`** at **connect** included that group | **Group messages** and **group presence** counts for that group. |
+| **`user:<user_id>`** | Every authenticated socket for that user | **Direct messages** and ensuring the user receives their own copies of DM events. |
+| **`group:<group_id>`** | Each socket whose **`listMyGroups`** at **connect** included that group | **Group messages** and **group presence** counts for that group. |
 
 Clients **do not** call `join` manually for these names in the current API; the server **`socket.join(...)`** on connection.
 
@@ -182,7 +182,7 @@ socket.emit("chat:group:send", {
 **Server behavior**
 
 1. **`ChatService.sendGroupMessage`** — enforces **group membership**; persists **`ChatMessage`** with `group_id` set.
-2. **`socketServer.to("grp:" + group_id).emit("group:message", message)`** — all sockets in that group room get the Sequelize message object (serialized as JSON).
+2. **`socketServer.to("group:" + group_id).emit("group:message", message)`** — all sockets in that group room get the Sequelize message object (serialized as JSON).
 
 **Note:** No **notification** rows are created on this path (unlike REST group send).
 
@@ -207,7 +207,7 @@ socket.emit("chat:direct:send", {
 **Server behavior**
 
 1. **`ChatService.sendDirectMessage`** — persists DM (`group_id` null, `receiver_user_id` set). **No membership check** between users (same as REST).
-2. **`socketServer.to("usr:" + sender).emit("direct:message", message)`** and **`to("usr:" + receiver).emit(...)`** — both parties receive the payload if they have an active socket in their user room.
+2. **`socketServer.to("user:" + sender).emit("direct:message", message)`** and **`to("user:" + receiver).emit(...)`** — both parties receive the payload if they have an active socket in their user room.
 
 **Note:** No **notification** on this path.
 
@@ -228,7 +228,7 @@ Use this for a global “user online/offline” indicator.
 
 **Payload:** `{ group_id: number, online_cnt: number }`
 
-Emitted to **`grp:<group_id>`** when someone connects or disconnects (after counts update). Use for “N members online in this group” in the UI.
+Emitted to **`group:<group_id>`** when someone connects or disconnects (after counts update). Use for “N members online in this group” in the UI.
 
 ### 7.3 `group:message`
 
@@ -237,7 +237,7 @@ Emitted to **`grp:<group_id>`** when someone connects or disconnects (after coun
 **Sources**
 
 - Socket **`chat:group:send`**
-- **REST** `POST /api/v1/chat/groups/:group_id/messages` (**`io.to("grp:...").emit`**)
+- **REST** `POST /api/v1/chat/groups/:group_id/messages` (**`io.to("group:...").emit`**)
 
 ### 7.4 `direct:message`
 
