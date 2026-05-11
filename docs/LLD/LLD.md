@@ -655,7 +655,7 @@ All routes require **`x-user-id`**.
 
 **Side effects**
 
-1. **Notification** for peer: `notification_type: "direct"`, **`related_user_id`** = sender.
+1. **Notification** for peer: `ntf_type: "direct"`, **`related_user_id`** = sender.
 2. **Socket.IO:** emits **`direct:message`** to **`user:<peer>`** and **`user:<sender>`**.
 
 ---
@@ -714,11 +714,11 @@ All routes require **`x-user-id`**.
   "data": {
     "items": [
       {
-        "notification_id": 1,
+        "ntf_id": 1,
         "user_id": 2,
-        "notification_type": "direct",
-        "notification_title": "New direct message",
-        "notification_body": "Hello…",
+        "ntf_type": "direct",
+        "ntf_title": "New direct message",
+        "ntf_body": "Hello…",
         "is_read": false,
         "group_id": null,
         "related_user_id": 1,
@@ -742,7 +742,7 @@ All routes require **`x-user-id`**.
 
 ---
 
-#### `POST /api/v1/notifications/:notification_id/read`
+#### `POST /api/v1/notifications/:ntf_id/read`
 
 **Success — 200** — returns updated notification with **`is_read: true`**.
 
@@ -836,11 +836,11 @@ UNIQUE(`message_id`, `user_id`).
 
 | Column | Type | Constraints |
 |--------|------|---------------|
-| `notification_id` | BIGINT UNSIGNED | PK, AI |
+| `ntf_id` | BIGINT UNSIGNED | PK, AI |
 | `user_id` | BIGINT UNSIGNED | NOT NULL |
-| `notification_type` | ENUM(`group`,`direct`,`system`) | NOT NULL, default `system` |
-| `notification_title` | VARCHAR(150) | NOT NULL |
-| `notification_body` | VARCHAR(600) | NOT NULL |
+| `ntf_type` | ENUM(`group`,`direct`,`system`) | NOT NULL, default `system` |
+| `ntf_title` | VARCHAR(150) | NOT NULL |
+| `ntf_body` | VARCHAR(600) | NOT NULL |
 | `is_read` | BOOLEAN | NOT NULL, default false |
 | `group_id` | BIGINT UNSIGNED | NULL |
 | `related_user_id` | BIGINT UNSIGNED | NULL |

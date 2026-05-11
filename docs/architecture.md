@@ -394,7 +394,7 @@ All notification routes require `x-user-id`.
 | Method | Path | Handler | Purpose |
 | --- | --- | --- | --- |
 | `GET` | `/notifications` | `NotificationController.list` | Paginated list filtered by `status=all/read/unread`. |
-| `POST` | `/notifications/:notification_id/read` | `NotificationController.markRead` | Mark the current user's notification as read. |
+| `POST` | `/notifications/:ntf_id/read` | `NotificationController.markRead` | Mark the current user's notification as read. |
 
 ## Controller Responsibilities
 
@@ -467,7 +467,7 @@ ChatMessage
 | `GroupUserMap` | `group_user_map` | Group membership, admin flag, exit state, exit timestamp |
 | `ChatMessage` | `chat_message` | `message_id`, `group_id`, `sender_user_id`, `receiver_user_id`, `message_text`, `message_type`, `sent_at` |
 | `MessageSeen` | `message_seen` | `message_id`, `user_id`, seen timestamp |
-| `Notification` | `notification` | `notification_id`, `user_id`, `notification_type`, title/body, `is_read`, `group_id`, `related_user_id`, `created_at` |
+| `Notification` | `notification` | `ntf_id`, `user_id`, `ntf_type`, title/body, `is_read`, `group_id`, `related_user_id`, `created_at` |
 
 Direct messages are stored in `chat_message` with `group_id = null` and `receiver_user_id` set. Group messages are stored with `group_id` set.
 

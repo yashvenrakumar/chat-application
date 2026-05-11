@@ -30,8 +30,8 @@ export class NotificationController {
 
   static async markRead(req: Request, res: Response): Promise<void> {
     const auth_user_id = req.auth_user_id as number;
-    const notification_id = Number(req.params.notification_id);
-    const notification = await NotificationService.markRead(notification_id, auth_user_id);
+    const ntf_id = Number(req.params.ntf_id);
+    const notification = await NotificationService.markRead(ntf_id, auth_user_id);
     res.status(200).json(successResponse("Notification marked as read", notification));
   }
 }

@@ -24,9 +24,9 @@ export class ChatController {
         .map((user_id) =>
           NotificationService.createNotification({
             user_id,
-            notification_type: "group",
-            notification_title: "New group message",
-            notification_body: payload.message_text.slice(0, 120),
+            ntf_type: "group",
+            ntf_title: "New group message",
+            ntf_body: payload.message_text.slice(0, 120),
             group_id,
           }),
         ),
@@ -60,9 +60,9 @@ export class ChatController {
 
     await NotificationService.createNotification({
       user_id: peer_user_id,
-      notification_type: "direct",
-      notification_title: "New direct message",
-      notification_body: payload.message_text.slice(0, 120),
+      ntf_type: "direct",
+      ntf_title: "New direct message",
+      ntf_body: payload.message_text.slice(0, 120),
       related_user_id: auth_user_id,
     });
 

@@ -6,7 +6,7 @@ const notificationRouter = Router();
 
 notificationRouter.get("/", asyncHandler(NotificationController.list));
 notificationRouter.post(
-  "/:notification_id/read",
+  "/:ntf_id/read",
   asyncHandler(NotificationController.markRead),
 );
 

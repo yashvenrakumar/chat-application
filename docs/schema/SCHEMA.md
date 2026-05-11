@@ -75,11 +75,11 @@ erDiagram
   }
 
   notification {
-    BIGINT notification_id PK
+    BIGINT ntf_id PK
     BIGINT user_id FK
-    ENUM notification_type
-    VARCHAR notification_title
-    VARCHAR notification_body
+    ENUM ntf_type
+    VARCHAR ntf_title
+    VARCHAR ntf_body
     BOOLEAN is_read
     BIGINT group_id "nullable"
     BIGINT related_user_id "nullable"
@@ -256,16 +256,16 @@ Types below match Sequelize **`DataTypes`** (MySQL physical types follow Sequeli
 
 | Column | Type | Constraints / notes |
 |--------|------|------------------------|
-| `notification_id` | BIGINT UNSIGNED | PK, auto-increment |
+| `ntf_id` | BIGINT UNSIGNED | PK, auto-increment |
 | `user_id` | BIGINT UNSIGNED | NOT NULL — recipient → `user.user_id` |
-| `notification_type` | ENUM(`group`, `direct`, `system`) | NOT NULL, default `system` |
-| `notification_title` | VARCHAR(150) | NOT NULL |
-| `notification_body` | VARCHAR(600) | NOT NULL |
+| `ntf_type` | ENUM(`group`, `direct`, `system`) | NOT NULL, default `system` |
+| `ntf_title` | VARCHAR(150) | NOT NULL |
+| `ntf_body` | VARCHAR(600) | NOT NULL |
 | `is_read` | BOOLEAN | NOT NULL, default `false` |
 | `group_id` | BIGINT UNSIGNED | NULL — context for `group` type |
 | `related_user_id` | BIGINT UNSIGNED | NULL — e.g. DM sender for `direct` type |
 | `created_at` | DATE | NOT NULL, default NOW |
 
-**Indexes:** `idx_notification_user_id`, `idx_notification_is_read`.
+**Indexes:** `idx_ntf_user_id`, `idx_ntf_is_read`.
 
 --- 

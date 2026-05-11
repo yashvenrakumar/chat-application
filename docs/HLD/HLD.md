@@ -146,7 +146,7 @@ erDiagram
 | **`group_user_map`** | `group_user_map_id` | Membership: `(group_id, user_id)` unique among non-exited semantics enforced in app; `is_admin`, `joined_at`, `exited_at`, `is_exited`. |
 | **`chat_message`** | `message_id` | Message row: optional `group_id` (null = direct), `sender_user_id`, optional `receiver_user_id`, `message_text`, `message_type` (`text`), `sent_at`. |
 | **`message_seen`** | `message_seen_id` | Read receipt: unique `(message_id, user_id)`, `seen_at`. |
-| **`notification`** | `notification_id` | User inbox: `notification_type` (`group` \| `direct` \| `system`), title/body, `is_read`, optional `group_id` / `related_user_id`, `created_at`. |
+| **`notification`** | `ntf_id` | User inbox: `ntf_type` (`group` \| `direct` \| `system`), title/body, `is_read`, optional `group_id` / `related_user_id`, `created_at`. |
 
 ### 5.3 Sequelize associations (application-level)
 
@@ -263,7 +263,7 @@ Base: **`/api/v1`**
 | Method | Path | Function |
 |--------|------|----------|
 | GET | `/notifications` | Paginated list; query `page`, `limit` (default 10, max 50), `status` = `all` \| `read` \| `unread`; includes **`unread_count`**. |
-| POST | `/notifications/:notification_id/read` | Mark one notification read if it belongs to the user. |
+| POST | `/notifications/:ntf_id/read` | Mark one notification read if it belongs to the user. |
 
 ### 7.4 Validation rules (request bodies)
 

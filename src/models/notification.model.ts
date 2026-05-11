@@ -2,33 +2,33 @@ import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database";
 
 export interface NotificationAttributes {
-  notification_id: number;
+  ntf_id: number;
   user_id: number;
-  notification_type: "group" | "direct" | "system";
-  notification_title: string;
-  notification_body: string;
+  ntf_type: "group" | "direct" | "system";
+  ntf_title: string;
+  ntf_body: string;
   is_read: boolean;
-  /** Group chat notification refers to (when `notification_type` is `group`). */
+  /** Group chat notification refers to (when `ntf_type` is `group`). */
   group_id?: number | null;
-  /** Other user in a direct-message notification (`notification_type` `direct`): the sender. */
+  /** Other user in a direct-message notification (`ntf_type` `direct`): the sender. */
   related_user_id?: number | null;
   created_at?: Date;
 }
 
 export type NotificationCreationAttributes = Optional<
   NotificationAttributes,
-  "notification_id" | "is_read" | "created_at" | "group_id" | "related_user_id"
+  "ntf_id" | "is_read" | "created_at" | "group_id" | "related_user_id"
 >;
 
 export class Notification
   extends Model<NotificationAttributes, NotificationCreationAttributes>
   implements NotificationAttributes
 {
-  public notification_id!: number;
+  public ntf_id!: number;
   public user_id!: number;
-  public notification_type!: "group" | "direct" | "system";
-  public notification_title!: string;
-  public notification_body!: string;
+  public ntf_type!: "group" | "direct" | "system";
+  public ntf_title!: string;
+  public ntf_body!: string;
   public is_read!: boolean;
   public group_id!: number | null;
   public related_user_id!: number | null;
@@ -37,7 +37,7 @@ export class Notification
 
 Notification.init(
   {
-    notification_id: {
+    ntf_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
@@ -46,16 +46,16 @@ Notification.init(
       type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
     },
-    notification_type: {
+    ntf_type: {
       type: DataTypes.ENUM("group", "direct", "system"),
       allowNull: false,
       defaultValue: "system",
     },
-    notification_title: {
+    ntf_title: {
       type: DataTypes.STRING(150),
       allowNull: false,
     },
-    notification_body: {
+    ntf_body: {
       type: DataTypes.STRING(600),
       allowNull: false,
     },
@@ -86,8 +86,8 @@ Notification.init(
     tableName: "notification",
     timestamps: false,
     indexes: [
-      { name: "idx_notification_user_id", fields: ["user_id"] },
-      { name: "idx_notification_is_read", fields: ["is_read"] },
+      { name: "idx_ntf_user_id", fields: ["user_id"] },
+      { name: "idx_ntf_is_read", fields: ["is_read"] },
     ],
   }
 );

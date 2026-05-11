@@ -5,9 +5,9 @@ export type NotificationListStatus = "all" | "read" | "unread";
 export class NotificationService {
   static async createNotification(payload: {
     user_id: number;
-    notification_type: "group" | "direct" | "system";
-    notification_title: string;
-    notification_body: string;
+    ntf_type: "group" | "direct" | "system";
+    ntf_title: string;
+    ntf_body: string;
     group_id?: number | null;
     related_user_id?: number | null;
   }): Promise<Notification> {
@@ -65,8 +65,8 @@ export class NotificationService {
     };
   }
 
-  static async markRead(notification_id: number, user_id: number): Promise<Notification> {
-    const notification = await Notification.findOne({ where: { notification_id, user_id } });
+  static async markRead(ntf_id: number, user_id: number): Promise<Notification> {
+    const notification = await Notification.findOne({ where: { ntf_id, user_id } });
     if (!notification) throw new HttpError(404, "Notification not found");
     notification.is_read = true;
     await notification.save();
