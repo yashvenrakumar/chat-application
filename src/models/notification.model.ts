@@ -41,6 +41,7 @@ Notification.init(
       type: DataTypes.BIGINT.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
+      field: "notification_id",
     },
     user_id: {
       type: DataTypes.BIGINT.UNSIGNED,
@@ -50,14 +51,17 @@ Notification.init(
       type: DataTypes.ENUM("group", "direct", "system"),
       allowNull: false,
       defaultValue: "system",
+      field: "notification_type",
     },
     ntf_title: {
       type: DataTypes.STRING(150),
       allowNull: false,
+      field: "notification_title",
     },
     ntf_body: {
       type: DataTypes.STRING(600),
       allowNull: false,
+      field: "notification_body",
     },
     is_read: {
       type: DataTypes.BOOLEAN,

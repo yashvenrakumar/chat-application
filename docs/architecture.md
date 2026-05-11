@@ -694,3 +694,5 @@ Socket event
 
 REST APIs provide reliable request/response workflows for users, groups, chat history, notifications, and read receipts. Socket.IO provides real-time delivery for group chat, direct chat, presence, and read receipt updates.
 
+'
+
