@@ -7,8 +7,16 @@ import { requireUserContext } from "../middlewares/auth-context.middleware";
 
 const userRouter = Router();
 
-userRouter.post("/", validateBody(createUserSchema), asyncHandler(UserController.create));
+userRouter.post(
+  "/",
+  validateBody(createUserSchema),
+  asyncHandler(UserController.create),
+);
 userRouter.get("/", asyncHandler(UserController.getAll));
-userRouter.get("/directory", requireUserContext, asyncHandler(UserController.listDirectory));
+userRouter.get(
+  "/directory",
+  requireUserContext,
+  asyncHandler(UserController.listDirectory),
+);
 
 export default userRouter;
