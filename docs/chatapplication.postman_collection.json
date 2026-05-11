@@ -1,0 +1,699 @@
+{
+  "info": {
+    "_postman_id": "77461f08-fafd-4ca7-9fbe-22d20d6d96c3",
+    "name": "chatapplication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "7707124"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "http://localhost:5000/api/v1/users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS 'http://localhost:5000/api/v1/users'\n"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Doe\",\n    \"email_id\": \"jane.doe@example.com\"\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST 'http://localhost:5000/api/v1/users' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Doe\",\n    \"email_id\": \"jane.doe@example.com\"\n  }'"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/users/directory?page=1&limit=10",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-usr-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/users/directory?page=1&limit=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "directory"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET --url \"http://localhost:5000/api/v1/users/directory?page=1&limit=10\" -H \"x-usr-id: 1\"\n"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "groups",
+      "item": [
+        {
+          "name": "http://localhost:5000/api/v1/groups/my",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups/my",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups",
+                "my"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/groups/my\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/groups",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"group_title\":\"Weekend trip\",\"user_ids\":[2,3]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/groups\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 1\" \\\n  -d '{\"group_title\":\"Weekend trip\",\"user_ids\":[2,3]}'"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/groups/1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"group_title\":\"Weekend trip (updated)\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X PUT \"http://localhost:5000/api/v1/groups/1\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 1\" \\\n  -d '{\"group_title\":\"Weekend trip (updated)\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/groups/1/members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups/1/members",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups",
+                "1",
+                "members"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/groups/1/members\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/groups/1/members",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"user_ids\":[2,3]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups/1/members",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups",
+                "1",
+                "members"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/groups/1/members\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 1\" \\\n  -d '{\"user_ids\":[2,3]}'"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/groups/1/members/2",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups/1/members/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups",
+                "1",
+                "members",
+                "2"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X DELETE \"http://localhost:5000/api/v1/groups/1/members/2\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/groups/1/admin/2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/groups/1/admin/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "groups",
+                "1",
+                "admin",
+                "2"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/groups/1/admin/2\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "chat",
+      "item": [
+        {
+          "name": "http://localhost:5000/api/v1/chat/groups/1/messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/groups/1/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "groups",
+                "1",
+                "messages"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/chat/groups/1/messages\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/chat/groups/1/messages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"message_text\":\"Hello group\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/groups/1/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "groups",
+                "1",
+                "messages"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/chat/groups/1/messages\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 1\" \\\n  -d '{\"message_text\":\"Hello group\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/chat/groups/1/online",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/groups/1/online",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "groups",
+                "1",
+                "online"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/chat/groups/1/online\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/chat/direct/2/online",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/direct/2/online",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "direct",
+                "2",
+                "online"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/chat/direct/2/online\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/chat/direct/2/messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/direct/2/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "direct",
+                "2",
+                "messages"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/chat/direct/2/messages\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/chat/direct/2/messages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"message_text\":\"Hi there\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/direct/2/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "direct",
+                "2",
+                "messages"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/chat/direct/2/messages\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 1\" \\\n  -d '{\"message_text\":\"Hi there\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/chat/messages/1/seen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/chat/messages/1/seen",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "messages",
+                "1",
+                "seen"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/chat/messages/1/seen\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "item": [
+        {
+          "name": "http://localhost:5000/api/v1/notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/notifications\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/notifications/42/read",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/notifications/42/read",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "42",
+                "read"
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/notifications/42/read\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        },
+        {
+          "name": "http://localhost:5000/api/v1/notifications?page=3&limit=50&status=read",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/notifications?page=3&limit=50&status=read",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "3"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "status",
+                  "value": "read"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/notifications?page=3&limit=50&status=read\" \\\n  -H \"x-user-id: 1\""
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
