@@ -72,3 +72,4 @@ You should see a successful DB connection log, then something like: `Server is r
 
 - **Port in use** — change `PORT` in `.env` or stop the other process. The server logs a hint when `EADDRINUSE` occurs.
 - **MySQL connection** — verify host, port, user, password, and that `DB_NAME` exists; on macOS, socket path may need to match your MySQL install if you connect via socket.
+# chat-application
