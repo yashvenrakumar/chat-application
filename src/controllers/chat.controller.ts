@@ -102,18 +102,18 @@ export class ChatController {
     res.status(200).json(
       successResponse("Group online users fetched successfully", {
         group_id,
-        online_cnt: online.length,
-        online_usr_ids: online,
+        online_count: online.length,
+        online_user_ids: online,
       }),
     );
   }
 
   static async directOnline(req: Request, res: Response): Promise<void> {
-    const peer_usr_id = Number(req.params.peer_usr_id);
+    const peer_user_id = Number(req.params.peer_user_id);
     res.status(200).json(
       successResponse("Direct user online status fetched successfully", {
-        usr_id: peer_usr_id,
-        is_online: presenceService.isUserOnline(peer_usr_id),
+        user_id: peer_user_id,
+        is_online: presenceService.isUserOnline(peer_user_id),
       }),
     );
   }

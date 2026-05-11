@@ -46,7 +46,7 @@ export class NotificationService {
     const [items, total, unread_count] = await Promise.all([
       Notification.findAll({
         where,
-        order: [["crt_dt", "DESC"]],
+        order: [["created_at", "DESC"]],
         limit: safeLimit,
         offset,
       }),

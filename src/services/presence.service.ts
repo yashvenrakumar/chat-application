@@ -2,42 +2,42 @@ class PresenceService {
   private userSockets = new Map<number, Set<string>>();
   private groupSockets = new Map<number, Set<number>>();
 
-  addSocket(usr_id: number, socket_id: string): void {
-    const sockets = this.userSockets.get(usr_id) ?? new Set<string>();
+  addSocket(user_id: number, socket_id: string): void {
+    const sockets = this.userSockets.get(user_id) ?? new Set<string>();
     sockets.add(socket_id);
-    this.userSockets.set(usr_id, sockets);
+    this.userSockets.set(user_id, sockets);
   }
 
-  removeSocket(usr_id: number, socket_id: string): void {
-    const sockets = this.userSockets.get(usr_id);
+  removeSocket(user_id: number, socket_id: string): void {
+    const sockets = this.userSockets.get(user_id);
     if (!sockets) return;
     sockets.delete(socket_id);
-    if (sockets.size === 0) this.userSockets.delete(usr_id);
+    if (sockets.size === 0) this.userSockets.delete(user_id);
   }
 
-  joinGroup(usr_id: number, grp_id: number): void {
-    const users = this.groupSockets.get(grp_id) ?? new Set<number>();
-    users.add(usr_id);
-    this.groupSockets.set(grp_id, users);
+  joinGroup(user_id: number, group_id: number): void {
+    const users = this.groupSockets.get(group_id) ?? new Set<number>();
+    users.add(user_id);
+    this.groupSockets.set(group_id, users);
   }
 
-  leaveGroup(usr_id: number, grp_id: number): void {
-    const users = this.groupSockets.get(grp_id);
+  leaveGroup(user_id: number, group_id: number): void {
+    const users = this.groupSockets.get(group_id);
     if (!users) return;
-    users.delete(usr_id);
-    if (users.size === 0) this.groupSockets.delete(grp_id);
+    users.delete(user_id);
+    if (users.size === 0) this.groupSockets.delete(group_id);
   }
 
-  getOnlineCount(grp_id: number): number {
-    return (this.groupSockets.get(grp_id) ?? new Set<number>()).size;
+  getOnlineCount(group_id: number): number {
+    return (this.groupSockets.get(group_id) ?? new Set<number>()).size;
   }
 
-  getOnlineUsers(grp_id: number): number[] {
-    return [...(this.groupSockets.get(grp_id) ?? new Set<number>())];
+  getOnlineUsers(group_id: number): number[] {
+    return [...(this.groupSockets.get(group_id) ?? new Set<number>())];
   }
 
-  isUserOnline(usr_id: number): boolean {
-    const sockets = this.userSockets.get(usr_id);
+  isUserOnline(user_id: number): boolean {
+    const sockets = this.userSockets.get(user_id);
     return !!sockets && sockets.size > 0;
   }
 }
