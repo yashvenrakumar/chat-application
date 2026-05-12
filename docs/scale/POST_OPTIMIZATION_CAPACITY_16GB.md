@@ -2,7 +2,7 @@
 
 **Companion to:** [DAU_CAPACITY_16GB_REPORT.md](./DAU_CAPACITY_16GB_REPORT.md) (definitions of **DAU**, **PCU**, **peak overlap \(p\)**, RAM model, and DB write bands — still authoritative for first-principles math).
 
-**Purpose:** Record **what changed in code**, **why the architecture scales better on the same RAM**, and **how to interpret capacity after optimization** without implying magic multipliers on hard limits (heap bytes per socket, MySQL insert ceiling). **Future architecture and modules:** see **§8**.
+**Purpose:** Record **what changed in code**, **why the architecture scales better on the same RAM**, and **how to interpret capacity after optimization** without implying magic multipliers on hard limits (heap bytes per socket, MySQL insert ceiling). **Diagrams:** **§1.1**. **Future architecture and modules:** **§8**.
 
 ---
 
@@ -20,6 +20,93 @@
 **Bytes per concurrent socket** and **heap budget** still cap **PCU** in the same order of magnitude as the original report (**~5k–15k** engineering band on a 16 GB–class host, until you load-test your shape). Optimizations mainly improve **CPU**, **egress**, **event-loop stability under churn**, and **ability to use the DB tier** — so the system can stay healthy **at similar or somewhat higher PCU** when traffic is **churn-heavy** or **write-parallel**, and avoid falling over **before** RAM.
 
 **DAU** is still **not** a direct function of RAM: **DAU ≈ PCU ÷ \(p\)** at peak (see companion doc §7). After optimization, **\(p\)** and **messages/day** still determine whether you are safe; the **bottleneck shifts** away from “global presence melted the CPU.”
+
+### 1.1 Diagrams — what changed (visual)
+
+#### A. User presence fan-out: before vs after (default `scoped`)
+
+One connect/disconnect triggered a **full broadcast** before; now deliveries go only to **personal** and **relevant group** rooms (`emit-user-presence.ts`).
+
+```mermaid
+flowchart TB
+  subgraph legacy [Before — global broadcast]
+    L1[New socket: user online] --> L2["socketServer.emit('user:presence')"]
+    L2 --> L3["Deliver to ALL N sockets"]
+    L3 --> L4["Work grows with Θ(N) per churn"]
+  end
+
+  subgraph current [After — scoped default]
+    A1[New socket: user online] --> A2["emitUserPresence()"]
+    A2 --> A3["to user:user_id — own devices"]
+    A2 --> A4["to group:id — only co-members"]
+    A4 --> A5["Work grows with interest set not total N"]
+  end
+```
+
+#### B. Socket connect path: `listMyGroups` + room joins
+
+```mermaid
+sequenceDiagram
+  participant C as Client
+  participant S as Socket.IO
+  participant G as GroupService
+  participant DB as MySQL
+
+  C->>S: WebSocket connect + auth
+  S->>G: listMyGroups(user_id)
+  Note over G: In-memory TTL ~45s per user
+  alt Cache hit
+    G-->>S: groups without DB
+  else Cache miss
+    G->>DB: SQL mappings + chat_group
+    DB-->>G: rows
+    G-->>S: groups
+  end
+  S->>S: join user and group rooms
+  S->>S: emitUserPresence + group:presence
+```
+
+#### C. Sequelize connection pool: before vs after
+
+```mermaid
+flowchart LR
+  subgraph pool_before [Before — implicit pool]
+    APP1[Node app] --> P1["pool max often ~5"]
+    P1 --> MY1[(MySQL)]
+  end
+
+  subgraph pool_after [After — env-driven pool]
+    APP2[Node app] --> P2["DB_POOL_MAX default 30"]
+    P2 --> MY2[(MySQL)]
+  end
+```
+
+Parallel chat **writes** were easier to queue at the app when **~5** connections were in flight; the new default raises the ceiling **up to what MySQL allows** (still not unlimited inserts/sec).
+
+#### D. Chat message over the wire + transport defaults
+
+```mermaid
+flowchart LR
+  subgraph msg [Group / direct message path]
+    CHAT[ChatService.create] --> PLAIN["get plain true JSON"]
+    PLAIN --> EMIT["socket emit to room"]
+    EMIT --> IOOPT["Socket.IO: perMessageDeflate off by default"]
+  end
+```
+
+#### E. DAU vs PCU — relationship unchanged by code tweaks
+
+RAM still bounds **PCU** (concurrent sockets); **DAU** scales when **p** (fraction of DAU online at peak) is small.
+
+```mermaid
+flowchart TB
+  subgraph limits [Same 16 GB box]
+    H[Heap + socket budget] --> PCU["Plan PCU ~5k–15k band"]
+  end
+  PCU --> F["DAU ≈ PCU ÷ p"]
+  ANALYTICS["p from product / analytics"] --> F
+  F --> OUT["Larger DAU only if p is low or PCU measured higher"]
+```
 
 ---
 
@@ -275,7 +362,7 @@ Implement these only with **metrics** and **tests**; defaults should stay safe.
 
 | Field | Value |
 |-------|-------|
-| Document type | Post-optimization capacity, changelog, before/after comparison (**§2**), further roadmap (**§8**) |
+| Document type | Post-optimization capacity, changelog, diagrams (**§1.1**), before/after comparison (**§2**), further roadmap (**§8**) |
 | Applies to | Implemented: presence scoping, pool tuning, Socket.IO env tuning, `listMyGroups` cache. **§8** includes **not yet implemented** architecture options. |
 | Validation | **Load testing required** before contractual SLAs |
 
