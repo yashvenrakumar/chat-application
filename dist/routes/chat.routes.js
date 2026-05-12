@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const asyncHandler_1 = require("../utils/asyncHandler");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const chat_validator_1 = require("../validators/chat.validator");
+const chat_controller_1 = require("../controllers/chat.controller");
+const chatRouter = (0, express_1.Router)();
+chatRouter.get("/groups/:group_id/messages", (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.getGroupMessages));
+chatRouter.post("/groups/:group_id/messages", (0, validate_middleware_1.validateBody)(chat_validator_1.sendMessageSchema), (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.sendGroupMessage));
+chatRouter.get("/groups/:group_id/online", (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.groupOnline));
+chatRouter.get("/direct/:peer_user_id/online", (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.directOnline));
+chatRouter.get("/direct/:peer_user_id/messages", (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.getDirectMessages));
+chatRouter.post("/direct/:peer_user_id/messages", (0, validate_middleware_1.validateBody)(chat_validator_1.sendMessageSchema), (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.sendDirectMessage));
+chatRouter.post("/messages/:message_id/seen", (0, asyncHandler_1.asyncHandler)(chat_controller_1.ChatController.markSeen));
+exports.default = chatRouter;

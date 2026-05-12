@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const user_routes_1 = __importDefault(require("./user.routes"));
+const auth_context_middleware_1 = require("../middlewares/auth-context.middleware");
+const group_routes_1 = __importDefault(require("./group.routes"));
+const chat_routes_1 = __importDefault(require("./chat.routes"));
+const notification_routes_1 = __importDefault(require("./notification.routes"));
+const asyncHandler_1 = require("../utils/asyncHandler");
+const notification_controller_1 = require("../controllers/notification.controller");
+const apiRouter = (0, express_1.Router)();
+apiRouter.use("/users", user_routes_1.default);
+apiRouter.get("/notifications/push/vapid-public-key", (0, asyncHandler_1.asyncHandler)(notification_controller_1.NotificationController.vapidPublicKey));
+apiRouter.use(auth_context_middleware_1.requireUserContext);
+apiRouter.use("/groups", group_routes_1.default);
+apiRouter.use("/chat", chat_routes_1.default);
+apiRouter.use("/notifications", notification_routes_1.default);
+exports.default = apiRouter;

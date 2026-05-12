@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const asyncHandler_1 = require("../utils/asyncHandler");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const group_controller_1 = require("../controllers/group.controller");
+const group_validator_1 = require("../validators/group.validator");
+const groupRouter = (0, express_1.Router)();
+groupRouter.get("/my", (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.myGroups));
+groupRouter.post("/", (0, validate_middleware_1.validateBody)(group_validator_1.createGroupSchema), (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.create));
+groupRouter.put("/:group_id", (0, validate_middleware_1.validateBody)(group_validator_1.updateGroupSchema), (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.update));
+groupRouter.get("/:group_id/members", (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.members));
+groupRouter.post("/:group_id/members", (0, validate_middleware_1.validateBody)(group_validator_1.addGroupMembersSchema), (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.addMembers));
+groupRouter.delete("/:group_id/members/:user_id", (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.removeMember));
+groupRouter.post("/:group_id/admin/:user_id", (0, asyncHandler_1.asyncHandler)(group_controller_1.GroupController.changeAdmin));
+exports.default = groupRouter;
