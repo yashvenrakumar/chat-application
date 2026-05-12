@@ -36,8 +36,9 @@ const startServer = async (): Promise<void> => {
   try {
     await connectDB();
     console.log("Database connected successfully");
+
     await sequelize.sync({
-      alter: env.nodeEnv === "development",
+      force: env.nodeEnv === "development", // ← drops & recreates tables (one-time fix)
       logging: false,
     });
 
@@ -63,6 +64,7 @@ const startServer = async (): Promise<void> => {
       }
       process.exit(1);
     });
+
     httpServer.listen(env.port, () => {
       console.log(`Server is running on port ${env.port}`);
     });

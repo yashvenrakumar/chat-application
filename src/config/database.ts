@@ -6,7 +6,8 @@ export const sequelize = new Sequelize(env.db.name, env.db.user, env.db.password
   port: env.db.port,
   dialect: "mysql",
   dialectOptions: {
-    socketPath: env.db.socketPath,
+    // ← fixed: only set socketPath if explicitly provided via DB_SOCKET_PATH
+    ...(env.db.socketPath ? { socketPath: env.db.socketPath } : {}),
   },
   pool: {
     max: env.db.pool.max,
