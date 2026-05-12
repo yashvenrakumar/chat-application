@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { successResponse } from "../utils/apiResponse";
 import { NotificationService, type NotificationListStatus } from "../services/notification.service";
+import { HttpError } from "../utils/httpError";
+import { PushSubscriptionService } from "../services/push-subscription.service";
+import { WebPushService } from "../services/web-push.service";
+import type { BrowserPushSubscriptionInput } from "../services/push-subscription.service";
 
 const parsePageQuery = (raw: unknown): number => {
   const n = Number(raw);
@@ -19,6 +23,37 @@ const parseNotificationStatus = (raw: unknown): NotificationListStatus => {
 };
 
 export class NotificationController {
+  /** Public: browser needs the VAPID public key before `pushManager.subscribe`. */
+  static async vapidPublicKey(_req: Request, res: Response): Promise<void> {
+    const publicKey = WebPushService.getPublicKey();
+    if (!publicKey) {
+      throw new HttpError(
+        503,
+        "Web Push is not configured (set VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT)",
+      );
+    }
+    res.status(200).json(successResponse("VAPID public key", { publicKey }));
+  }
+
+  static async pushSubscribe(req: Request, res: Response): Promise<void> {
+    const auth_user_id = req.auth_user_id as number;
+    const body = req.validated as BrowserPushSubscriptionInput;
+    const row = await PushSubscriptionService.upsertForUser(auth_user_id, body);
+    res.status(200).json(successResponse("Push subscription saved", { push_subscription_id: row.push_subscription_id }));
+  }
+
+  static async pushUnsubscribe(req: Request, res: Response): Promise<void> {
+    const auth_user_id = req.auth_user_id as number;
+    const body = req.validated as { endpoint?: string };
+    if (body.endpoint) {
+      const removed = await PushSubscriptionService.removeByEndpoint(auth_user_id, body.endpoint);
+      res.status(200).json(successResponse("Push subscription removed", { removed }));
+      return;
+    }
+    const removed = await PushSubscriptionService.removeAllForUser(auth_user_id);
+    res.status(200).json(successResponse("All push subscriptions removed", { removed }));
+  }
+
   static async list(req: Request, res: Response): Promise<void> {
     const auth_user_id = req.auth_user_id as number;
     const page = parsePageQuery(req.query.page);

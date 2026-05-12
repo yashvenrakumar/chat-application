@@ -3,6 +3,7 @@ import { ChatService } from "../services/chat.service";
 import { GroupService } from "../services/group.service";
 import { presenceService } from "../services/presence.service";
 import { emitUserPresence } from "./emit-user-presence";
+import { MessagingNotifyService } from "../services/messaging-notify.service";
 
 export const registerSocketEvents = (socketServer: Server): void => {
   socketServer.on("connection", async (socket) => {
@@ -34,6 +35,7 @@ export const registerSocketEvents = (socketServer: Server): void => {
         sender_user_id: user_id,
         message_text: payload.message_text,
       });
+      await MessagingNotifyService.afterGroupMessage(message, user_id);
       const plain = message.get({ plain: true });
       socketServer.to(`group:${payload.group_id}`).emit("group:message", plain);
     });
@@ -44,6 +46,7 @@ export const registerSocketEvents = (socketServer: Server): void => {
         receiver_user_id: payload.receiver_user_id,
         message_text: payload.message_text,
       });
+      await MessagingNotifyService.afterDirectMessage(message);
       const plain = message.get({ plain: true });
       socketServer.to(`user:${user_id}`).emit("direct:message", plain);
       socketServer.to(`user:${payload.receiver_user_id}`).emit("direct:message", plain);

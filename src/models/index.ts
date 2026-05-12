@@ -3,6 +3,7 @@ import { ChatMessage } from "./chat-message.model";
 import { GroupUserMap } from "./group-user-map.model";
 import { MessageSeen } from "./message-seen.model";
 import { Notification } from "./notification.model";
+import { PushSubscription } from "./push-subscription.model";
 import { User } from "./user.model";
 
 ChatGroup.belongsTo(User, { foreignKey: "admin_user_id", as: "admin" });
@@ -14,5 +15,14 @@ ChatMessage.belongsTo(User, { foreignKey: "receiver_user_id", as: "receiver" });
 MessageSeen.belongsTo(ChatMessage, { foreignKey: "message_id" });
 MessageSeen.belongsTo(User, { foreignKey: "user_id" });
 Notification.belongsTo(User, { foreignKey: "user_id" });
+PushSubscription.belongsTo(User, { foreignKey: "user_id" });
 
-export { User, ChatGroup, GroupUserMap, ChatMessage, MessageSeen, Notification };
+export {
+  User,
+  ChatGroup,
+  GroupUserMap,
+  ChatMessage,
+  MessageSeen,
+  Notification,
+  PushSubscription,
+};

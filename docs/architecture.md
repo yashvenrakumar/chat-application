@@ -1,4 +1,5 @@
 
+**Web Push (VAPID):** See [WEB_PUSH_ARCHITECTURE.md](WEB_PUSH_ARCHITECTURE.md) for routes, offline vs online behavior, and the `push_subscription` table.
 
 Overall Flow
 __________________________

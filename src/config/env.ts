@@ -42,4 +42,13 @@ export const env = {
     pingTimeout: parseIntEnv("SOCKET_IO_PING_TIMEOUT_MS", 20_000),
     maxHttpBufferSize: parseIntEnv("SOCKET_IO_MAX_HTTP_BUFFER", 1_000_000),
   },
+  /**
+   * Web Push (VAPID). Public key is safe to expose to the browser; keep the private key secret.
+   * `VAPID_SUBJECT` must be a contact URI: `mailto:you@example.com` or `https://your-site.com`.
+   */
+  webPush: {
+    vapidPublicKey: (process.env.VAPID_PUBLIC_KEY || "").trim(),
+    vapidPrivateKey: (process.env.VAPID_PRIVATE_KEY || "").trim(),
+    vapidSubject: (process.env.VAPID_SUBJECT || "").trim(),
+  },
 };

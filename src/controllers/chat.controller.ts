@@ -4,7 +4,7 @@ import { io } from "../socket/io";
 import { GroupService } from "../services/group.service";
 import { presenceService } from "../services/presence.service";
 import { ChatService } from "../services/chat.service";
-import { NotificationService } from "../services/notification.service";
+import { MessagingNotifyService } from "../services/messaging-notify.service";
 
 export class ChatController {
   static async sendGroupMessage(req: Request, res: Response): Promise<void> {
@@ -17,20 +17,7 @@ export class ChatController {
       message_text: payload.message_text,
     });
 
-    const memberIds = await ChatService.listGroupMemberIds(group_id);
-    await Promise.all(
-      memberIds
-        .filter((user_id) => user_id !== auth_user_id)
-        .map((user_id) =>
-          NotificationService.createNotification({
-            user_id,
-            ntf_type: "group",
-            ntf_title: "New group message",
-            ntf_body: payload.message_text.slice(0, 120),
-            group_id,
-          }),
-        ),
-    );
+    await MessagingNotifyService.afterGroupMessage(message, auth_user_id);
 
     io.to(`group:${group_id}`).emit("group:message", message);
     res
@@ -58,13 +45,7 @@ export class ChatController {
       message_text: payload.message_text,
     });
 
-    await NotificationService.createNotification({
-      user_id: peer_user_id,
-      ntf_type: "direct",
-      ntf_title: "New direct message",
-      ntf_body: payload.message_text.slice(0, 120),
-      related_user_id: auth_user_id,
-    });
+    await MessagingNotifyService.afterDirectMessage(message);
 
     io.to(`user:${peer_user_id}`).emit("direct:message", message);
     io.to(`user:${auth_user_id}`).emit("direct:message", message);

@@ -16,6 +16,7 @@ This document describes the **MySQL tables** and **logical relationships** impli
 | `ChatMessage` | `chat_message` | **Group** messages (`group_id` set) or **direct** messages (`group_id` null, `receiver_user_id` set). |
 | `MessageSeen` | `message_seen` | Read receipt: which user saw which message (unique per pair). |
 | `Notification` | `notification` | In-app notification row per recipient user. |
+| `PushSubscription` | `push_subscription` | Browser Web Push subscription (endpoint + keys) per user/device. |
 
 All models use **`timestamps: false`** with explicit `created_at` / `updated_at` or `created_at` / `sent_at` / `seen_at` columns where defined.
 
@@ -86,6 +87,15 @@ erDiagram
     DATETIME created_at
   }
 
+  push_subscription {
+    BIGINT push_subscription_id PK
+    BIGINT user_id FK
+    TEXT endpoint
+    TEXT keys_p256dh
+    TEXT keys_auth
+    DATETIME created_at
+  }
+
   user ||--o{ chat_group : "admin_user_id"
   user ||--o{ group_user_map : "user_id"
   chat_group ||--o{ group_user_map : "group_id"
@@ -95,6 +105,7 @@ erDiagram
   chat_message ||--o{ message_seen : "message_id"
   user ||--o{ message_seen : "user_id"
   user ||--o{ notification : "user_id"
+  user ||--o{ push_subscription : "user_id"
 ```
 
 **How to read `chat_message`**
@@ -128,6 +139,10 @@ flowchart TB
     N[notification]
   end
 
+  subgraph webpush [Web Push]
+    PS[push_subscription]
+  end
+
   subgraph receipts [Read receipts]
     MS[message_seen]
   end
@@ -140,6 +155,7 @@ flowchart TB
   U --> CGM
   U --> DM
   U --> N
+  U --> PS
   CG -. optional ref .-> N
   U -. related_user_id .-> N
   CGM --> MS
@@ -164,6 +180,7 @@ Only **`belongsTo`** is declared (child → parent). Inverse associations (`hasM
 | `MessageSeen` | `belongsTo` `ChatMessage` | `message_id` | — |
 | `MessageSeen` | `belongsTo` `User` | `user_id` | — |
 | `Notification` | `belongsTo` `User` | `user_id` | — |
+| `PushSubscription` | `belongsTo` `User` | `user_id` | — |
 
 **Note:** `Notification.group_id` and `Notification.related_user_id` are **columns only**; there is **no** `belongsTo(ChatGroup)` or `belongsTo(User, { as: 'related' })` in `index.ts`. Application code treats them as optional references.
 
@@ -267,5 +284,22 @@ Types below match Sequelize **`DataTypes`** (MySQL physical types follow Sequeli
 | `created_at` | DATE | NOT NULL, default NOW |
 
 **Indexes:** `idx_ntf_user_id`, `idx_ntf_is_read`.
+
+---
+
+### 5.7 `push_subscription`
+
+| Column | Type | Constraints / notes |
+|--------|------|------------------------|
+| `push_subscription_id` | BIGINT UNSIGNED | PK, auto-increment |
+| `user_id` | BIGINT UNSIGNED | NOT NULL → `user.user_id` |
+| `endpoint` | TEXT | NOT NULL — push service URL (unique in practice; upserted in app by `endpoint`) |
+| `keys_p256dh` | TEXT | NOT NULL — client public key material |
+| `keys_auth` | TEXT | NOT NULL — client auth secret |
+| `created_at` | DATE | NOT NULL, default NOW |
+
+**Indexes:** `idx_push_sub_user_id` (`user_id`).
+
+**Semantics:** One row per browser subscription. The same `endpoint` is updated if the user re-subscribes (e.g. after token refresh). Expired subscriptions are deleted when the push service returns HTTP 404/410.
 
 --- 
