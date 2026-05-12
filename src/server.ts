@@ -44,6 +44,10 @@ const startServer = async (): Promise<void> => {
     httpServer = createServer(app);
     socketServer = new SocketServer(httpServer, {
       cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] },
+      perMessageDeflate: env.socketIo.perMessageDeflate,
+      pingInterval: env.socketIo.pingInterval,
+      pingTimeout: env.socketIo.pingTimeout,
+      maxHttpBufferSize: env.socketIo.maxHttpBufferSize,
     });
 
     setSocketServer(socketServer);

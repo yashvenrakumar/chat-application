@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import { ChatService } from "../services/chat.service";
 import { GroupService } from "../services/group.service";
 import { presenceService } from "../services/presence.service";
+import { emitUserPresence } from "./emit-user-presence";
 
 export const registerSocketEvents = (socketServer: Server): void => {
   socketServer.on("connection", async (socket) => {
@@ -13,9 +14,10 @@ export const registerSocketEvents = (socketServer: Server): void => {
 
     presenceService.addSocket(user_id, socket.id);
     socket.join(`user:${user_id}`);
-    socketServer.emit("user:presence", { user_id, is_online: true });
-
     const groups = await GroupService.listMyGroups(user_id);
+    const groupIds = groups.map((g) => Number(g.group_id));
+    emitUserPresence(socketServer, user_id, { user_id, is_online: true }, groupIds);
+
     groups.forEach((group) => {
       const group_id = Number(group.group_id);
       socket.join(`group:${group_id}`);
@@ -32,7 +34,8 @@ export const registerSocketEvents = (socketServer: Server): void => {
         sender_user_id: user_id,
         message_text: payload.message_text,
       });
-      socketServer.to(`group:${payload.group_id}`).emit("group:message", message);
+      const plain = message.get({ plain: true });
+      socketServer.to(`group:${payload.group_id}`).emit("group:message", plain);
     });
 
     socket.on("chat:direct:send", async (payload: { receiver_user_id: number; message_text: string }) => {
@@ -41,16 +44,17 @@ export const registerSocketEvents = (socketServer: Server): void => {
         receiver_user_id: payload.receiver_user_id,
         message_text: payload.message_text,
       });
-      socketServer.to(`user:${user_id}`).emit("direct:message", message);
-      socketServer.to(`user:${payload.receiver_user_id}`).emit("direct:message", message);
+      const plain = message.get({ plain: true });
+      socketServer.to(`user:${user_id}`).emit("direct:message", plain);
+      socketServer.to(`user:${payload.receiver_user_id}`).emit("direct:message", plain);
     });
 
     socket.on("disconnect", () => {
       presenceService.removeSocket(user_id, socket.id);
-      socketServer.emit("user:presence", {
+      emitUserPresence(socketServer, user_id, {
         user_id,
         is_online: presenceService.isUserOnline(user_id),
-      });
+      }, groupIds);
       groups.forEach((group) => {
         const group_id = Number(group.group_id);
         presenceService.leaveGroup(user_id, group_id);

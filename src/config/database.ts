@@ -8,6 +8,12 @@ export const sequelize = new Sequelize(env.db.name, env.db.user, env.db.password
   dialectOptions: {
     socketPath: env.db.socketPath,
   },
+  pool: {
+    max: env.db.pool.max,
+    min: env.db.pool.min,
+    acquire: env.db.pool.acquire,
+    idle: env.db.pool.idle,
+  },
   logging: env.nodeEnv === "development" ? console.log : false,
 });
 

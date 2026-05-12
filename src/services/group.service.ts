@@ -2,7 +2,14 @@ import { Op } from "sequelize";
 import { ChatGroup, GroupUserMap, User } from "../models";
 import { HttpError } from "../utils/httpError";
 
+const LIST_MY_GROUPS_TTL_MS = 45_000;
+const listMyGroupsCache = new Map<number, { expiresAt: number; groups: ChatGroup[] }>();
+
 export class GroupService {
+  /** Call when membership or visible group list changes for these users (socket join path uses listMyGroups). */
+  static invalidateListMyGroupsCacheForUsers(userIds: number[]): void {
+    for (const id of userIds) listMyGroupsCache.delete(id);
+  }
   static async createGroup(
     admin_user_id: number,
     payload: { group_title: string; user_ids: number[] }
@@ -18,6 +25,7 @@ export class GroupService {
       }))
     );
 
+    GroupService.invalidateListMyGroupsCacheForUsers(uniqueUserIds);
     return group;
   }
 
@@ -38,6 +46,7 @@ export class GroupService {
     if (missingIds.length === 0) return;
 
     await GroupUserMap.bulkCreate(missingIds.map((user_id) => ({ group_id, user_id })));
+    GroupService.invalidateListMyGroupsCacheForUsers([auth_user_id, ...missingIds]);
   }
 
   static async removeMember(group_id: number, auth_user_id: number, user_id: number): Promise<void> {
@@ -49,6 +58,7 @@ export class GroupService {
     mapping.is_exited = true;
     mapping.exited_at = new Date();
     await mapping.save();
+    GroupService.invalidateListMyGroupsCacheForUsers([user_id]);
   }
 
   static async changeGroupAdmin(group_id: number, auth_user_id: number, user_id: number): Promise<ChatGroup> {
@@ -69,17 +79,26 @@ export class GroupService {
 
     group.admin_user_id = user_id;
     await group.save();
+    GroupService.invalidateListMyGroupsCacheForUsers([auth_user_id, user_id]);
     return group;
   }
 
   static async listMyGroups(auth_user_id: number): Promise<ChatGroup[]> {
+    const now = Date.now();
+    const cached = listMyGroupsCache.get(auth_user_id);
+    if (cached && cached.expiresAt > now) return cached.groups;
+
     const mappings = await GroupUserMap.findAll({
       where: { user_id: auth_user_id, is_exited: false },
       attributes: ["group_id"],
     });
     const groupIds = mappings.map((item) => Number(item.group_id));
-    if (groupIds.length === 0) return [];
-    return ChatGroup.findAll({ where: { group_id: { [Op.in]: groupIds }, is_active: true } });
+    const groups =
+      groupIds.length === 0
+        ? []
+        : await ChatGroup.findAll({ where: { group_id: { [Op.in]: groupIds }, is_active: true } });
+    listMyGroupsCache.set(auth_user_id, { expiresAt: now + LIST_MY_GROUPS_TTL_MS, groups });
+    return groups;
   }
 
   static async listGroupMembers(group_id: number): Promise<User[]> {
