@@ -73,7 +73,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "x-user-id",
+                "key": "x-usr-id",
                 "value": "1"
               }
             ],
@@ -101,7 +101,7 @@
                 }
               ]
             },
-            "description": "Generated from cURL: curl -sS -X GET --url \"http://localhost:5000/api/v1/users/directory?page=1&limit=10\" -H \"x-user-id: 1\"\n"
+            "description": "Generated from cURL: curl -sS -X GET --url \"http://localhost:5000/api/v1/users/directory?page=1&limit=10\" -H \"x-usr-id: 1\"\n"
           },
           "response": []
         }
@@ -692,92 +692,159 @@
             "description": "Generated from cURL: curl -sS -X GET \"http://localhost:5000/api/v1/notifications?page=3&limit=50&status=read\" \\\n  -H \"x-user-id: 1\""
           },
           "response": []
-        },
+        }
+      ]
+    },
+    {
+      "name": "pushNotification",
+      "item": [
         {
-          "name": "Web Push - GET VAPID public key",
+          "name": "http://localhost:5000/api/v1/notifications/push/vapid-public-key",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/api/v1/notifications/push/vapid-public-key",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "v1", "notifications", "push", "vapid-public-key"]
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "push",
+                "vapid-public-key"
+              ]
             },
-            "description": "No auth. Returns { success, message, data: { publicKey } }. Requires VAPID_* in .env.\n\ncURL:\ncurl -sS \"http://localhost:5000/api/v1/notifications/push/vapid-public-key\""
+            "description": "Generated from cURL: curl -sS \"http://localhost:5000/api/v1/notifications/push/vapid-public-key\"\n"
           },
           "response": []
         },
         {
-          "name": "Web Push - POST subscribe (save browser subscription)",
+          "name": "http://localhost:5000/api/v1/notifications/push/subscribe",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "x-user-id", "value": "2" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"endpoint\": \"https://fcm.googleapis.com/fcm/send/REPLACE_WITH_REAL_ENDPOINT_FROM_BROWSER\",\n  \"expirationTime\": null,\n  \"keys\": {\n    \"p256dh\": \"REPLACE_WITH_SUBSCRIPTION_p256dh_FROM_BROWSER\",\n    \"auth\": \"REPLACE_WITH_SUBSCRIPTION_auth_FROM_BROWSER\"\n  }\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\"endpoint\":\"https://...\",\"expirationTime\":null,\"keys\":{\"p256dh\":\"...\",\"auth\":\"...\"}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/api/v1/notifications/push/subscribe",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "v1", "notifications", "push", "subscribe"]
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "push",
+                "subscribe"
+              ]
             },
-            "description": "Paste the full object from subscription.toJSON() after subscribe() in the browser.\n\ncURL:\ncurl -sS -X POST \"http://localhost:5000/api/v1/notifications/push/subscribe\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 2\" \\\n  -d '{\"endpoint\":\"...\",\"keys\":{\"p256dh\":\"...\",\"auth\":\"...\"}}'"
+            "description": "Generated from cURL: curl -sS -X POST \"http://localhost:5000/api/v1/notifications/push/subscribe\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 2\" \\\n  -d '{\"endpoint\":\"https://...\",\"expirationTime\":null,\"keys\":{\"p256dh\":\"...\",\"auth\":\"...\"}}'"
           },
           "response": []
         },
         {
-          "name": "Web Push - DELETE subscribe (one endpoint)",
+          "name": "http://localhost:5000/api/v1/notifications/push/subscribe",
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "x-user-id", "value": "2" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"endpoint\": \"https://fcm.googleapis.com/fcm/send/REPLACE_WITH_SAME_ENDPOINT\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\"endpoint\":\"https://...\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/api/v1/notifications/push/subscribe",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "v1", "notifications", "push", "subscribe"]
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "push",
+                "subscribe"
+              ]
             },
-            "description": "cURL:\ncurl -sS -X DELETE \"http://localhost:5000/api/v1/notifications/push/subscribe\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 2\" \\\n  -d '{\"endpoint\":\"https://...\"}'"
+            "description": "Generated from cURL: curl -sS -X DELETE \"http://localhost:5000/api/v1/notifications/push/subscribe\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 2\" \\\n  -d '{\"endpoint\":\"https://...\"}'"
           },
           "response": []
         },
         {
-          "name": "Web Push - DELETE subscribe (all for user)",
+          "name": "http://localhost:5000/api/v1/notifications/push/subscribe",
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "x-user-id", "value": "2" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/api/v1/notifications/push/subscribe",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["api", "v1", "notifications", "push", "subscribe"]
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "push",
+                "subscribe"
+              ]
             },
-            "description": "Empty JSON body removes every push_subscription for this x-user-id.\n\ncURL:\ncurl -sS -X DELETE \"http://localhost:5000/api/v1/notifications/push/subscribe\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 2\" \\\n  -d '{}'"
+            "description": "Generated from cURL: curl -sS -X DELETE \"http://localhost:5000/api/v1/notifications/push/subscribe\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-user-id: 2\" \\\n  -d '{}'"
           },
           "response": []
         }
